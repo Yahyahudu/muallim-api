@@ -13,6 +13,11 @@ Route::get('/', function () {
         'message' => 'gell'
     ]);
 });
+Route::get('/a', function () {
+    return response()->json([
+        'message' => 'Help me'
+    ]);
+});
 
 Route::get('/tafsir', [TafsirController::class, 'index']);
 Route::get('/tafsir/{id}', [TafsirController::class, 'show'])->where('id', '[a-zA-Z0-9_\-]+');
