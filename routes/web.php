@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Route;
 
 use App\Services\SearchIntelligence;
 
+Route::get('/', function () {
+    return view('maintenace');
+});
+
 Route::get('/tafsir', [TafsirController::class, 'index']);
 Route::get('/tafsir/{id}', [TafsirController::class, 'show'])->where('id', '[a-zA-Z0-9_\-]+');
 Route::get('/search', [SearchController::class, 'search']);
