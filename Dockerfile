@@ -15,10 +15,11 @@ ENV REAL_IP_HEADER=1
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# FORCE composer install
 RUN composer install --no-dev --optimize-autoloader
 
-# Laravel permissions
 RUN chmod -R 775 storage bootstrap/cache
 
-CMD ["/start.sh"]
+# Run migrations before starting
+CMD php artisan migrate --force && /start.sh
+
+CMD php artisan migrate --force && php artisan db:seed --force && /start.sh
