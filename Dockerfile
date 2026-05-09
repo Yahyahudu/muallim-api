@@ -7,7 +7,7 @@ COPY . .
 ENV WEBROOT=/var/www/html/public
 
 ENV APP_ENV=production
-ENV APP_DEBUG=false
+ENV APP_DEBUG=true
 ENV LOG_CHANNEL=stderr
 ENV ENABLE_LARAVEL_OPTIMIZATION=true
 
@@ -19,10 +19,6 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-dev --optimize-autoloader
 
 RUN chmod -R 775 storage bootstrap/cache
-
-RUN php artisan route:cache \
-    && php artisan view:cache \
-    && php artisan route:list
 
 # Run migrations before starting
 CMD php artisan db:wipe --force && \
