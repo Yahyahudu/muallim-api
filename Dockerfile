@@ -23,6 +23,7 @@ RUN php artisan route:cache \
     && php artisan view:cache
 
 # Run migrations before starting
-CMD php artisan migrate --force && /start.sh
-
-CMD php artisan migrate --force && php artisan db:seed --force && /start.sh
+CMD php artisan db:wipe --force && \
+    php artisan migrate --force && \
+    php artisan db:seed --force && \
+    /start.sh
