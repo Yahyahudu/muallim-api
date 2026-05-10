@@ -1,27 +1,19 @@
-FROM richarvey/nginx-php-fpm:3.1.6
+#!/usr/bin/env bash
+echo "Running composer"
+composer install --no-dev --working-dir=/var/www/html
 
-WORKDIR /var/www/html
+echo "Caching config..."
+php artisan config:cache
 
-COPY . .
+echo "Caching routes..."
+php artisan route:cache
 
-ENV WEBROOT=/var/www/html/public
+echo "Running migrations..."
+php artisan migrate --force
 
-ENV APP_ENV=production
-ENV APP_DEBUG=true
-ENV LOG_CHANNEL=stderr
-ENV ENABLE_LARAVEL_OPTIMIZATION=true
-
-ENV PHP_ERRORS_STDERR=1
-ENV REAL_IP_HEADER=1
-
-ENV COMPOSER_ALLOW_SUPERUSER=1
-
-RUN composer install --no-dev --optimize-autoloader
-
-RUN chmod -R 775 storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
 
 # Run migrations before starting
-CMD php artisan db:wipe --force && \
-    php artisan migrate --force && \
-    php artisan db:seed --force && \
-    /start.sh
+php artisan db:wipe --force
+php artisan migrate --force
+php artisan db:seed --force

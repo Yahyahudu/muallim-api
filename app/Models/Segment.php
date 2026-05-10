@@ -53,19 +53,26 @@ class Segment extends Model
      */
     public function scopeSearch($query, ?string $processedQuery, array $filters = [])
     {
+        // Expression MUST match the index exactly
+        $searchExpression = "
+        setweight(to_tsvector('simple', coalesce(scholar_name, '')), 'A') ||
+        setweight(to_tsvector('simple', coalesce(type, '')), 'B') ||
+        setweight(to_tsvector('simple', coalesce(tags->>'topics', '')), 'C') ||
+        setweight(to_tsvector('simple', coalesce(tags->>'keywords', '')), 'D')
+    ";
+
         if ($processedQuery) {
             $quoted = $query->getConnection()->getPdo()->quote($processedQuery);
 
-            // Explicitly select all segment columns, then add rank
             $query->select('segments.*')
-                ->selectRaw("ts_rank(search_vector, to_tsquery('simple', {$quoted})) as rank")
-                ->whereRaw("search_vector @@ to_tsquery('simple', {$quoted})");
+                ->selectRaw("ts_rank({$searchExpression}, to_tsquery('simple', {$quoted})) as rank")
+                ->whereRaw("{$searchExpression} @@ to_tsquery('simple', {$quoted})");
         } else {
             $query->select('segments.*')
                 ->selectRaw('0 as rank');
         }
 
-
+        // Apply filters
         if (!empty($filters['scholar_id'])) {
             $query->where('scholar_id', $filters['scholar_id']);
         }
@@ -84,6 +91,7 @@ class Segment extends Model
             $query->where('type', $filters['type']);
         }
 
+        // Ordering
         if ($processedQuery) {
             $query->orderBy('rank', 'desc');
         }
@@ -91,7 +99,7 @@ class Segment extends Model
         $query->orderBy('order', 'asc');
         $query->orderBy('start_at', 'asc');
 
-        return $query;
+        return $query;  
     }
 
     public function getStartAtFormattedAttribute()
