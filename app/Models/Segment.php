@@ -91,6 +91,10 @@ class Segment extends Model
             $query->where('type', $filters['type']);
         }
 
+        if (!empty($filters['topic'])) {
+            $query->whereRaw("tags->>'topics' ILIKE ?", ['%' . $filters['topic'] . '%']);
+        }
+
         // Ordering
         if ($processedQuery) {
             $query->orderBy('rank', 'desc');
@@ -99,7 +103,7 @@ class Segment extends Model
         $query->orderBy('order', 'asc');
         $query->orderBy('start_at', 'asc');
 
-        return $query;  
+        return $query;
     }
 
     public function getStartAtFormattedAttribute()
