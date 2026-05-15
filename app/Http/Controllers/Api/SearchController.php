@@ -42,7 +42,7 @@ class SearchController extends Controller
         $processingTime = round((microtime(true) - $startTime) * 1000);
 
         $response['meta'] = [
-            'query' => $validated['q'],
+            'query' => $validated['q'] ?? null,
             'expanded_query' => $processedQuery,
             'processing_time_ms' => $processingTime,
             'result_count' => $segments->total(),
