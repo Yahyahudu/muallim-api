@@ -69,7 +69,8 @@ class Segment extends Model
                 ->whereRaw("{$searchExpression} @@ to_tsquery('simple', {$quoted})");
         } else {
             $query->select('segments.*')
-                ->selectRaw('0 as rank');
+                ->selectRaw('0 as rank')
+                 ->orderBy('id', 'desc');
         }
 
         // Apply filters

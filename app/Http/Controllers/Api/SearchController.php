@@ -14,7 +14,7 @@ class SearchController extends Controller
         $startTime = microtime(true);
 
         $validated = $request->validate([
-            'q' => 'required|string|max:200',
+            'q' => 'nullable|string|max:200',
             'scholar_id' => 'nullable|string',      
             'scholarId' => 'nullable|string',       
             'surah' => 'nullable|integer|min:1',
