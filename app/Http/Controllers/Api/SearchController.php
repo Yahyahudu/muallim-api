@@ -30,7 +30,8 @@ class SearchController extends Controller
             $request->merge(['scholar_id' => $request->scholarId]);
         }
 
-        $processedQuery = $intelligence->process($validated['q']);
+       $processedQuery = !empty($validated['q']) ? $intelligence->process($validated['q']) : '';
+
         
         $filters = $request->only(['scholar_id', 'surah', 'verse', 'type', 'topic']);
 
